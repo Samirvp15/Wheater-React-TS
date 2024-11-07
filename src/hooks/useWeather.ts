@@ -37,6 +37,7 @@ export default function useWeather() {
         const appID = import.meta.env.VITE_API_KEY
         setLoading(true)
         setWeather(initialState)
+        setNotFound(false)
 
         try {
             const geoURL = `https://api.openweathermap.org/geo/1.0/direct?q=${search.city},${search.country}&appid=${appID}`
@@ -58,7 +59,6 @@ export default function useWeather() {
             const result = Weather.safeParse(weatherResult)
 
             if (result.success) {
-                setNotFound(false)
                 setWeather(result.data)
             }
 
