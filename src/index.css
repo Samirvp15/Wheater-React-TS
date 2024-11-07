@@ -11,7 +11,7 @@ html {
 
 body {
     font-family: "Outfit", sans-serif;
-    background-image: url('/public/bg-clima.jpg');
+    background-image: url('/bg-clima.jpg');
     height: 100vh;
     background-size: cover;
     background-repeat: no-repeat;
