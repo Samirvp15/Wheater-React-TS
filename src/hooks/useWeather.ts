@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { SearchType } from '../types';
 import { z } from 'zod';
+import { useMemo, useState } from 'react';
 
 
 //Zod
@@ -13,18 +14,28 @@ const Weather = z.object({
     })
 })
 
-type Weather = z.infer<typeof Weather>
+export type Weather = z.infer<typeof Weather>
 
 
 
 export default function useWeather() {
 
+    const [weather, setWeather] = useState({
+        name: '',
+        main: {
+            temp: 0,
+            temp_max: 0,
+            temp_min: 0
+        }
+    })
+
+    const [loading, setLoading] = useState(false)
+
     const fetchWeather = async (search: SearchType) => {
 
+        const appID = import.meta.env.VITE_API_KEY
+        setLoading(true)
         try {
-
-            const appID = import.meta.env.VITE_API_KEY
-
             const geoURL = `http://api.openweathermap.org/geo/1.0/direct?q=${search.city},${search.country}&appid=${appID}`
 
             const { data } = await axios.get(geoURL)
@@ -34,24 +45,30 @@ export default function useWeather() {
 
             const weatherURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${appID}`
 
-            //const {data: weatherResult} = await axios.get<WeatherType>(weatherURL)
-            //console.log(weatherResult)
-
-            const {data: weatherResult} = await axios.get(weatherURL)
+            const { data: weatherResult } = await axios.get(weatherURL)
 
             const result = Weather.safeParse(weatherResult)
 
-            console.log(result)
+            if (result.success) {
+                setWeather(result.data)
+            }
 
 
         } catch (error) {
             console.log(error)
+        } finally {
+            setLoading(false)
         }
 
     }
 
+    const hasWeatherData = useMemo(() => weather.name, [weather])
+
     return {
-        fetchWeather
+        weather,
+        loading,
+        fetchWeather,
+        hasWeatherData
     }
 
 

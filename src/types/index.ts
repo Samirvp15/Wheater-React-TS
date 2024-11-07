@@ -10,14 +10,3 @@ export type CountryType = {
     code: string,
     name: string,
 }
-
-
-export type WeatherType = {
-    name: string,
-    main: {
-        temp: number,
-        temp_max: number,
-        temp_mon: number,
-    }
-}
-
